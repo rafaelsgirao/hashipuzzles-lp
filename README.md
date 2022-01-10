@@ -1,1 +1,1 @@
-# hashipuzzles-pl
+# hashipuzzles-lp

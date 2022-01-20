@@ -1,9 +1,9 @@
 % Rafael Girao, ist199309
 
 :- [codigo_comum].
-
+:- [puzzles_publicos].
 %----------
-%2.1 - Predicado extrai_ilhas_linhas
+%2.1 - Predicado extrai_ilhas_linha/3
 %----------
 
 %extrai_ilhas_linha/3, enunciado
@@ -30,6 +30,24 @@ extrai_ilhas_linha(N_L, N_Col, [N_Pontes | B], [Nova_ilha | Ilhas]) :-
   faz_ilha(N_Pontes, N_L, N_Col, Nova_ilha),
   extrai_ilhas_linha(N_L, Col_seguinte, B, Ilhas).
 
+%----------
+%2.2 - ilhas/2
+%----------
+
+ilhas(Puz, Ilhas) :- 
+  ilhas(1, Puz, ListaAninhadaIlhas),
+  flatten(ListaAninhadaIlhas, Ilhas).
+
+
+%ilhas/3, auxiliar
+ilhas(_, [], _).
+
+ilhas(N_L, [LinhaPuzzle | CPuz], [LinhaIlhas | CIlhas]) :-
+  Proximalinha is +(N_L, 1),
+  extrai_ilhas_linha(N_L, LinhaPuzzle, LinhaIlhas),
+  ilhas(Proximalinha, CPuz, CIlhas).
+
+%
 %----------
 %Codigo Auxiliar
 %----------

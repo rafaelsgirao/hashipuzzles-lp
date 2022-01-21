@@ -47,10 +47,20 @@ ilhas(N_L, [LinhaPuzzle | CPuz], [LinhaIlhas | CIlhas]) :-
   extrai_ilhas_linha(N_L, LinhaPuzzle, LinhaIlhas),
   ilhas(Proximalinha, CPuz, CIlhas).
 
-%
+%----------
+%2.3 - vizinhas/3
+%----------
+
+vizinhas(Ilhas, Ilha, Vizinhas) : 
 %----------
 %Codigo Auxiliar
 %----------
 
 %Construtor da estrutura Ilha
 faz_ilha(N, N_Linha, N_Col, ilha(N, (N_Linha, N_Col))).
+
+obter_linha_ilha(ilha(N, (N_Linha, N_Col)), N_Linha).
+
+obter_linha_ilha(ilha(N, (N_Linha, N_Col)), N_Col).
+
+obter_nr_pontes_ilha(ilha(N, (N_Linha, N_Col)), N).

@@ -22,21 +22,8 @@ ilhas_linha(Puz, IlhasLinha) :-
   extrai_ilhas_linha(N_Linha, Linha_Puzzle, IlhasLinha).
 
 ilhas(Puz, Ilhas) :-
-%  findall(IlhasLinha, ilhas_linha(Puz, IlhasLinha), Ilhas),
   findall(IlhasLinha, ilhas_linha(Puz, IlhasLinha), ListaAninhadaIlhas),
   flatten(ListaAninhadaIlhas, Ilhas).
-
-%ilhas(Puz, Ilhas) :- 
-	%  ilhas(1, Puz, ListaAninhadaIlhas),
-%  flatten(ListaAninhadaIlhas, Ilhas).
-
-%ilhas/3, auxiliar
-%ilhas(_, [], _).
-%
-%ilhas(N_L, [LinhaPuzzle | CPuz], [LinhaIlhas | CIlhas]) :-
-%  Proximalinha is +(N_L, 1),
-%  extrai_ilhas_linha(N_L, LinhaPuzzle, LinhaIlhas),
-%  ilhas(Proximalinha, CPuz, CIlhas).
 
 %----------
 %2.3 - vizinhas/3

@@ -28,36 +28,81 @@ ilhas(Puz, Ilhas) :-
 %----------
 %2.3 - vizinhas/3
 %----------
+%FIXME: 2ª condição para as ilhas serem vizinhas não está a ser cumprida
 
-vizinhas([], _, []).
-%TODO: Eliminar ilhas que estão entre duas ilhas, 
-%atm está a marcá las como vizinhas
+%Caso de pertencerem ah mesma coluna
+vizinha(Ilhas, ilha(_, (N_Linha, N_Col)), ilha(N_Pontes_e, (N_Linha_e, N_Col_e))) :-
+  member(ilha(N_Pontes_e, (N_Linha_e, N_Col_e)), Ilhas),
+  N_Linha == N_Linha_e,
+  N_Col \== N_Col_e. % Nao retornar a propria ilha
 
-%Caso de pertencerem ah mesma linha
-vizinhas([Eilha | RIlhas], Ilha, [IlhaVizinha | RVizinhas]) :- 
-  obter_linha_ilha(Ilha, Ilha_linha),
-  obter_linha_ilha(Eilha, Eilha_linha),
-  Ilha_linha = Eilha_linha,
-  IlhaVizinha = Eilha,
-  vizinhas(RIlhas, Ilha, RVizinhas).
+%Caso de pertencera ah mesma linha
+vizinha(Ilhas, ilha(_, (N_Linha, N_Col)), ilha(N_Pontes_e, (N_Linha_e, N_Col_e))) :-
+  member(ilha(N_Pontes_e, (N_Linha_e, N_Col_e)), Ilhas),
+  N_Linha \== N_Linha_e, % Nao retornar a propria ilha
+  N_Col == N_Col_e. 
 
-%Brainstorm:
-%Como ver se duas ilhas não são vizinhas, mas partilham a mesma coluna ou linha?
-%
-%
-%
-%
-%Caso de pertenceram ah mesma coluna
-vizinhas([Eilha | RIlhas], Ilha, [IlhaVizinha | RVizinhas]) :- 
-  obter_col_ilha(Ilha, Ilha_col),
-  obter_col_ilha(Eilha, Eilha_col),
-  Ilha_col = Eilha_col,
-  IlhaVizinha = Eilha,
-  vizinhas(RIlhas, Ilha, RVizinhas).
+vizinhas(Ilhas, Ilha, Vizinhas) :-
+  findall(IlhaVizinha, vizinha(Ilhas, Ilha, IlhaVizinha), Vizinhas).
 
-%Caso em que nao sao vizinhas
-vizinhas([_ | RIlhas], Ilha, [_ | RVizinhas]) :-
-  vizinhas(RIlhas, Ilha, RVizinhas).
+
+%----------
+%2.4 - estado/2
+%----------
+
+%----------
+%2.5 - posicoes_entre/3
+%----------
+
+%----------
+%2.6 - cria_ponte/3
+%----------
+
+%----------
+%2.7 - caminho_livre/5
+%----------
+
+%----------
+%2.8 - actualiza_vizinhas_entrada/5
+%----------
+
+%----------
+%2.9 - actualiza_vizinhas_apos_pontes/4
+%----------
+
+%----------
+%2.10 - ilhas_terminadas/2
+%----------
+
+%----------
+%2.11 - tira_ilhas_terminadas_entrada/3
+%----------
+
+%----------
+%2.12 - tira_ilhas_terminadas/3
+%----------
+
+%----------
+%2.13 - tira_ilhas_terminadas_entrada/3
+%----------
+
+%----------
+%2.14 - marca_ilhas_terminadas/3
+%----------
+
+%----------
+%2.15 - trata_ilhas_terminadas/2
+%----------
+
+%----------
+%2.16 - junta_pontes/5
+%----------
+
+
+
+
+
+
 
 
 %----------

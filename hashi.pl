@@ -6,29 +6,12 @@
 %2.1 - Predicado extrai_ilhas_linha/3
 %----------
 
-%extrai_ilhas_linha/3, enunciado
-%---
+extrai_ilha_linha(N_Linha, Linha, ilha(N_Pontes, (N_Linha, N_Col))) :-
+  nth1(N_Col, Linha, N_Pontes),
+  N_Pontes =\= 0.
 
-extrai_ilhas_linha(_, [], []).
-
-extrai_ilhas_linha(N_L, Linha, Ilhas) :-
-  extrai_ilhas_linha(N_L, 1, Linha, Ilhas).
-
-%extrai_ilhas_linha/4 , auxiliar
-%---
-extrai_ilhas_linha(_, _, [], []) :- !.
-
-%Caso o nº de pontes seja 0, passar a frente
-extrai_ilhas_linha(N_L, N_Col, [0 | B], Ilhas) :-
-  Col_seguinte is  +(N_Col,1),
-  extrai_ilhas_linha(N_L, Col_seguinte , B, Ilhas).
-
-extrai_ilhas_linha(N_L, N_Col, [N_Pontes | B], [Nova_ilha | Ilhas]) :-
-  % number(N_Pontes), %TODO: check if necessary
-  N_Pontes =\= 0,
-  Col_seguinte is +(N_Col,1) ,
-  faz_ilha(N_Pontes, N_L, N_Col, Nova_ilha),
-  extrai_ilhas_linha(N_L, Col_seguinte, B, Ilhas).
+extrai_ilhas_linha(N_Linha, Linha, Ilhas) :-
+  findall(Ilha, extrai_ilha_linha(N_Linha, Linha, Ilha), Ilhas).
 
 %----------
 %2.2 - ilhas/2
@@ -37,7 +20,6 @@ extrai_ilhas_linha(N_L, N_Col, [N_Pontes | B], [Nova_ilha | Ilhas]) :-
 ilhas(Puz, Ilhas) :- 
   ilhas(1, Puz, ListaAninhadaIlhas),
   flatten(ListaAninhadaIlhas, Ilhas).
-
 
 %ilhas/3, auxiliar
 ilhas(_, [], _).
@@ -96,5 +78,3 @@ obter_col_ilha(ilha(_, (_, N_Col)), N_Col).
 obter_nr_pontes_ilha(ilha(N, (_, _)), N).
 
 %----------
-
-%Devolve q

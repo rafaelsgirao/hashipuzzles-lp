@@ -17,17 +17,26 @@ extrai_ilhas_linha(N_Linha, Linha, Ilhas) :-
 %2.2 - ilhas/2
 %----------
 
-ilhas(Puz, Ilhas) :- 
-  ilhas(1, Puz, ListaAninhadaIlhas),
+ilhas_linha(Puz, IlhasLinha) :-
+  nth1(N_Linha, Puz, Linha_Puzzle),
+  extrai_ilhas_linha(N_Linha, Linha_Puzzle, IlhasLinha).
+
+ilhas(Puz, Ilhas) :-
+%  findall(IlhasLinha, ilhas_linha(Puz, IlhasLinha), Ilhas),
+  findall(IlhasLinha, ilhas_linha(Puz, IlhasLinha), ListaAninhadaIlhas),
   flatten(ListaAninhadaIlhas, Ilhas).
 
-%ilhas/3, auxiliar
-ilhas(_, [], _).
+%ilhas(Puz, Ilhas) :- 
+	%  ilhas(1, Puz, ListaAninhadaIlhas),
+%  flatten(ListaAninhadaIlhas, Ilhas).
 
-ilhas(N_L, [LinhaPuzzle | CPuz], [LinhaIlhas | CIlhas]) :-
-  Proximalinha is +(N_L, 1),
-  extrai_ilhas_linha(N_L, LinhaPuzzle, LinhaIlhas),
-  ilhas(Proximalinha, CPuz, CIlhas).
+%ilhas/3, auxiliar
+%ilhas(_, [], _).
+%
+%ilhas(N_L, [LinhaPuzzle | CPuz], [LinhaIlhas | CIlhas]) :-
+%  Proximalinha is +(N_L, 1),
+%  extrai_ilhas_linha(N_L, LinhaPuzzle, LinhaIlhas),
+%  ilhas(Proximalinha, CPuz, CIlhas).
 
 %----------
 %2.3 - vizinhas/3
@@ -78,3 +87,4 @@ obter_col_ilha(ilha(_, (_, N_Col)), N_Col).
 obter_nr_pontes_ilha(ilha(N, (_, _)), N).
 
 %----------
+

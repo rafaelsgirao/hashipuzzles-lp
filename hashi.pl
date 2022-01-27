@@ -100,7 +100,7 @@ ordena_posicoes((Linha1, Col1), (Linha2, Col2), [PosMenor, PosMaior]) :-
   Linha1 < Linha2,
   !,
   PosMenor = (Linha1, Col1),
-  PosMenor = (Linha2, Col2).
+  PosMaior = (Linha2, Col2).
 
 ordena_posicoes((Linha1, Col1), (Linha2, Col2), [PosMenor, PosMaior]) :-
   Linha1 > Linha2,
@@ -133,6 +133,26 @@ cria_ponte(Pos1, Pos2, ponte(PosMenor, PosMaior)) :-
 %----------
 %2.7 - caminho_livre/5
 %----------
+
+%Duas ilhas deixam de ser vizinhas,
+%apos a criação de ponte(Pos1, Pos2), sse:
+% - Essa ponte nao for entre as duas ilhas;
+% - Pelo menos uma das posicoes entre as duas ilhas for ocupada pela ponte.
+
+caminho_livre(Pos1, Pos2, _, ilha(_, Pos_I), ilha(_, Pos_Vz)) :-
+  ordena_posicoes(Pos1, Pos2, [MenorPos1, MaiorPos1]),
+  ordena_posicoes(Pos_I, Pos_Vz, [MenorPos2, MaiorPos2]),
+  MenorPos1 == MenorPos2,
+  MaiorPos1 == MaiorPos2,
+  !.
+
+caminho_livre(_, _, PosicoesPonte, ilha(_, Pos_I), ilha(_, Pos_Vz)) :-
+  member(Posicao, PosicoesPonte),
+  posicoes_entre(Pos_I, Pos_Vz, PosicoesIlhaVz),
+  member(Posicao, PosicoesIlhaVz),
+  !,
+  fail.
+
 
 %----------
 %2.8 - actualiza_vizinhas_entrada/5

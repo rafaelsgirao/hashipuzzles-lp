@@ -29,6 +29,7 @@ ilhas(Puz, Ilhas) :-
 %2.3 - vizinhas/3
 %----------
 %FIXME: 2ª condição para as ilhas serem vizinhas não está a ser cumprida
+%FIXME: Ilhas vizinhas não estão a sair por ordem
 
 %Caso de pertencerem ah mesma coluna
 vizinha(Ilhas, ilha(_, (N_Linha, N_Col)), ilha(N_Pontes_e, (N_Linha_e, N_Col_e))) :-
@@ -49,6 +50,14 @@ vizinhas(Ilhas, Ilha, Vizinhas) :-
 %----------
 %2.4 - estado/2
 %----------
+
+estado_singular(Ilhas, [Ilha, Vizinhas, []]) :-
+  member(Ilha, Ilhas),
+  vizinhas(Ilhas, Ilha, Vizinhas).
+
+
+estado(Ilhas, Estado) :-
+  findall(EstadoIlha, estado_singular(Ilhas, EstadoIlha), Estado).
 
 %----------
 %2.5 - posicoes_entre/3

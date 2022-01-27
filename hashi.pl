@@ -62,7 +62,33 @@ estado(Ilhas, Estado) :-
 %----------
 %2.5 - posicoes_entre/3
 %----------
+posicao_entre((Linha1, Col1), (Linha2, Col2), (Linha1, Coluna)) :-
+  Linha1 =:= Linha2,
+  !,
+  Min is min(Col1, Col2),
+  Max is max(Col1, Col2),
 
+  SegundaCol is +(Min, 1),
+  PenultimaCol is -(Max, 1),
+
+  between(SegundaCol, PenultimaCol, Coluna).
+
+posicao_entre((Linha1, Col1), (Linha2, Col2), (Linha, Col1)) :-
+  Col1 =:= Col2,
+  !,
+  Min is min(Linha1, Linha2),
+  Max is max(Linha1, Linha2),
+
+  SegundaLinha is +(Min, 1),
+  PenultimaLinha is -(Max, 1),
+
+  between(SegundaLinha, PenultimaLinha, Linha).
+
+posicao_entre((_, _), (_, _), _) :-
+  fail.
+
+posicoes_entre(Pos1, Pos2, Posicoes) :-
+  bagof(Posicao, posicao_entre(Pos1, Pos2, Posicao), Posicoes).
 %----------
 %2.6 - cria_ponte/3
 %----------

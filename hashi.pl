@@ -157,6 +157,13 @@ caminho_livre(_, _, PosicoesPonte, ilha(_, Pos_I), ilha(_, Pos_Vz)) :-
 %----------
 %2.8 - actualiza_vizinhas_entrada/5
 %----------
+%Sample entrada: [ilha(3,(1,7)),[ilha(4,(1,1)),ilha(2,(6,7))],[]]
+actualiza_vizinha_entrada(Pos1, Pos2, Posicoes, [Ilha, Vizinhas, _], Vizinha) :-
+  member(Vizinha, Vizinhas),
+  caminho_livre(Pos1, Pos2, Posicoes, Ilha, Vizinha).
+
+actualiza_vizinhas_entrada(Pos1, Pos2, Posicoes, [Ilha, Vizinhas, Pontes], [Ilha, NovasVizinhas, Pontes]) :-
+  findall(Vizinha, actualiza_vizinha_entrada(Pos1, Pos2, Posicoes, [Ilha, Vizinhas, Pontes], Vizinha), NovasVizinhas).
 
 %----------
 %2.9 - actualiza_vizinhas_apos_pontes/4

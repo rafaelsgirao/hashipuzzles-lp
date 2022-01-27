@@ -89,9 +89,46 @@ posicao_entre((_, _), (_, _), _) :-
 
 posicoes_entre(Pos1, Pos2, Posicoes) :-
   bagof(Posicao, posicao_entre(Pos1, Pos2, Posicao), Posicoes).
+
+%TODO: Criar um predicado auxiliar ordena_posicoes, que recebe
+%Duas posicoes e retorna-as numa lista, ordenadas.
+
+%FIXME: this predicate is horrible.
+%FIXME: move this predicate to end of file
+
+ordena_posicoes((Linha1, Col1), (Linha2, Col2), [PosMenor, PosMaior]) :-
+  Linha1 < Linha2,
+  !,
+  PosMenor = (Linha1, Col1),
+  PosMenor = (Linha2, Col2).
+
+ordena_posicoes((Linha1, Col1), (Linha2, Col2), [PosMenor, PosMaior]) :-
+  Linha1 > Linha2,
+  !,
+  PosMenor = (Linha2, Col2),
+  PosMaior = (Linha1, Col1).
+
+ordena_posicoes((Linha1, Col1), (Linha2, Col2), [PosMenor, PosMaior]) :-
+  Linha1 =:= Linha2,
+  Col1 < Col2,
+  !,
+  PosMenor = (Linha1, Col1),
+  PosMaior = (Linha2, Col2).
+
+ordena_posicoes((Linha1, Col1), (Linha2, Col2), [PosMenor, PosMaior]) :-
+  Linha1 =:= Linha2,
+  Col1 > Col2,
+  !,
+  PosMenor = (Linha2, Col2),
+  PosMaior = (Linha1, Col1).
+
+
 %----------
 %2.6 - cria_ponte/3
 %----------
+cria_ponte(Pos1, Pos2, ponte(PosMenor, PosMaior)) :-
+  ordena_posicoes(Pos1, Pos2, [PosMenor, PosMaior]).
+
 
 %----------
 %2.7 - caminho_livre/5

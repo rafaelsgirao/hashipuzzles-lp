@@ -202,7 +202,13 @@ tira_ilhas_terminadas_entrada(Ilhas_term, [Ilha, Vizinhas, Pontes], [Ilha, NovaV
 %----------
 %2.12 - tira_ilhas_terminadas/3
 %----------
+tira_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada) :-
+  member(Entrada, Estado),
+  tira_ilhas_terminadas_entrada(Ilhas_term, Entrada, Nova_entrada).
+%  member(NovaEntrada, Novo_estado).
 
+tira_ilhas_terminadas(Estado, Ilhas_term, Novo_estado) :-
+  findall(Nova_entrada, tira_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada), Novo_estado).
 %----------
 %2.13 - tira_ilhas_terminadas_entrada/3
 %----------

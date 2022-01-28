@@ -178,10 +178,26 @@ actualiza_vizinhas_apos_pontes(Estado, Pos1, Pos2, NovoEstado) :-
 %----------
 %2.10 - ilhas_terminadas/2
 %----------
+%TODO: Ver o que significa 'esta ilha está terminada se N_pontes for diferente de X'
+ilha_terminada(Estado, ilha(N_pontes, Posicao)) :-
+  member([ilha(N_pontes, Posicao), _, Pontes], Estado),
+  number(N_pontes),
+  length(Pontes, N_pontes).
+
+ilhas_terminadas(Estado, Ilhas_term) :-
+  findall(Ilha_term, ilha_terminada(Estado, Ilha_term), Ilhas_term).
 
 %----------
 %2.11 - tira_ilhas_terminadas_entrada/3
 %----------
+%TODO: averiguar se preciso do termo 'Ilha' aqui - prolly not, but better safe than sorry
+tira_ilha_terminada_entrada_aux(Ilhas_term, Vizinhas, IlhaVizinha) :-
+  member(IlhaVizinha, Vizinhas),
+  \+ member(IlhaVizinha, Ilhas_term).
+%  member(IlhaVizinha, NovaVizinhas).
+
+tira_ilhas_terminadas_entrada(Ilhas_term, [Ilha, Vizinhas, Pontes], [Ilha, NovaVizinhas, Pontes]) :-
+  findall(IlhaVizinha, tira_ilha_terminada_entrada_aux(Ilhas_term, Vizinhas, IlhaVizinha), NovaVizinhas).
 
 %----------
 %2.12 - tira_ilhas_terminadas/3

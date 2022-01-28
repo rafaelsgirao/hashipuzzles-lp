@@ -168,7 +168,13 @@ actualiza_vizinhas_entrada(Pos1, Pos2, Posicoes, [Ilha, Vizinhas, Pontes], [Ilha
 %----------
 %2.9 - actualiza_vizinhas_apos_pontes/4
 %----------
+actualiza_vizinha_apos_pontes(Estado, Pos1, Pos2, Posicoes, EntradaNova) :-
+  member(Entrada, Estado),
+  actualiza_vizinhas_entrada(Pos1, Pos2, Posicoes, Entrada, EntradaNova).
 
+actualiza_vizinhas_apos_pontes(Estado, Pos1, Pos2, NovoEstado) :-
+  posicoes_entre(Pos1, Pos2, Posicoes),
+  findall(EntradaNova, actualiza_vizinha_apos_pontes(Estado, Pos1, Pos2, Posicoes, EntradaNova), NovoEstado).
 %----------
 %2.10 - ilhas_terminadas/2
 %----------

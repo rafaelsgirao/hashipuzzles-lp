@@ -212,10 +212,24 @@ tira_ilhas_terminadas(Estado, Ilhas_term, Novo_estado) :-
 %----------
 %2.13 - tira_ilhas_terminadas_entrada/3
 %----------
+%TODO: perguntar se este corte é sempre válido 
+% ou se preciso de ter um \+ member(...) dentro da 2ª definição
+marca_ilhas_terminadas_entrada(Ilhas_term, [ilha(N_pontes, Pos), Vizinhas, Pontes], [ilha('X', Pos), Vizinhas, Pontes]) :-
+  member(ilha(N_pontes, Pos), Ilhas_term),
+  !.
 
+marca_ilhas_terminadas_entrada(_, Entrada, Entrada).
 %----------
 %2.14 - marca_ilhas_terminadas/3
 %----------
+marca_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada) :-
+  member(Entrada, Estado),
+  marca_ilhas_terminadas_entrada(Ilhas_term, Entrada, Nova_entrada).
+
+marca_ilhas_terminadas(Estado, Ilhas_term, Novo_estado) :-
+  findall(Nova_entrada, marca_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada), Novo_estado).
+
+
 
 %----------
 %2.15 - trata_ilhas_terminadas/2

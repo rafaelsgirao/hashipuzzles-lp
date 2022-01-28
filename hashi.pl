@@ -229,11 +229,13 @@ marca_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada) :-
 marca_ilhas_terminadas(Estado, Ilhas_term, Novo_estado) :-
   findall(Nova_entrada, marca_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada), Novo_estado).
 
-
-
 %----------
 %2.15 - trata_ilhas_terminadas/2
 %----------
+trata_ilhas_terminadas(Estado, Novo_estado) :-
+  ilhas_terminadas(Estado, Ilhas_term),
+  tira_ilhas_terminadas(Estado, Ilhas_term, Estado_intermedio),
+  marca_ilhas_terminadas(Estado_intermedio, Ilhas_term, Novo_estado).
 
 %----------
 %2.16 - junta_pontes/5

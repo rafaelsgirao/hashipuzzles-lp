@@ -27,35 +27,38 @@ ilhas(Puz, Ilhas) :-
   flatten(ListaAninhadaIlhas, Ilhas).
 
 
-%Funcao auxiliar para satisfazer a 2a condicao de vizinhas/3
-%TODO: perguntar se posso usar um predicado feito muito mais ah frente
-%para definir este
-vizinha_aux(Ilhas, ilha(_, Pos1), ilha(_), Pos2) :-
-  member(ilha(_, Pos3), Ilhas),
-  posicoes_entre(Pos1, Pos2, Posicoes),
-  member(Pos3, Posicoes).
-  
-%vizinhas_aux(Ilhas, Ilha1, Ilha2) :-
-%  forall()
-  
+
 %----------
 %2.3 - vizinhas/3
 %----------
-%FIXME: 2a condicao para as ilhas serem vizinhas nao estah a ser cumprida
 
-%Caso de pertencera ah mesma linha
-vizinha(Ilhas, ilha(_, (N_Linha, N_Col)), ilha(N_Pontes_e, (N_Linha_e, N_Col_e))) :-
-  member(ilha(N_Pontes_e, (N_Linha_e, N_Col_e)), Ilhas),
-  N_Linha =\= N_Linha_e, % Nao retornar a propria ilha
-  N_Col =:= N_Col_e.
- % \+ vizinhas_aux(Ilhas, ilha(_, (N_Linha, N_Col), ilha()).
+%Funcao auxiliar para satisfazer a 2a condicao de vizinhas/3
+%TODO: perguntar se posso usar um predicado feito muito mais ah frente
+%para definir este
+%Retorna true se ilha em Pos3 estah entre a ilha em Pos1 e a em Pos2
+%
+vizinha_aux(ilha(_, Pos1), ilha(_, Pos2), ilha(_, Pos3)) :-
+%  member(ilha(_, Pos3), Ilhas),
+  posicoes_entre(Pos1, Pos2, Posicoes),
+  member(Pos3, Posicoes).
+  
+vizinhas_aux(Ilhas, Ilha1, Ilha2) :-
+  forall(member(Ilha3, Ilhas), vizinha_aux(Ilha1, Ilha2, Ilha3)).
+  
+  
+%Averigua se duas ilhas sao vizinhas (2o a 1a condicao dada no conceito)
+sao_vizinhas(ilha(_, (N_Linha_1, N_Col_1)), ilha(_, (N_Linha_2, N_Col_2))) :-
+  N_Linha_1 =:= N_Linha_2,
+  N_Col_1 =\= N_Col_2.
 
-%Caso de pertencerem ah mesma coluna
-vizinha(Ilhas, ilha(_, (N_Linha, N_Col)), ilha(N_Pontes_e, (N_Linha_e, N_Col_e))) :-
-  member(ilha(N_Pontes_e, (N_Linha_e, N_Col_e)), Ilhas),
-  N_Linha =:= N_Linha_e,
-  N_Col =\= N_Col_e. % Nao retornar a propria ilha
+sao_vizinhas(ilha(_, (N_Linha_1, N_Col_1)), ilha(_, (N_Linha_2, N_Col_2))) :-
+  N_Linha_1 =\= N_Linha_2,
+  N_Col_1 =:= N_Col_2.
 
+vizinha(Ilhas, Ilha, IlhaVz) :-
+  member(IlhaVz, Ilhas),
+  sao_vizinhas(Ilha, IlhaVz),
+  \+ vizinhas_aux(Ilhas, Ilha, IlhaVz).
 
 vizinhas(Ilhas, Ilha, Vizinhas) :-
   findall(IlhaVizinha, vizinha(Ilhas, Ilha, IlhaVizinha), Vizinhas).

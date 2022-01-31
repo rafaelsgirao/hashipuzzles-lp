@@ -1,11 +1,11 @@
 % Rafael Girao, ist199309
 
 :- [codigo_comum].
-%:- [puzzles_publicos].
 
 %----------
 %2.1 - Predicado extrai_ilhas_linha/3
 %----------
+
 
 extrai_ilha_linha(N_Linha, Linha, ilha(N_Pontes, (N_Linha, N_Col))) :-
   nth1(N_Col, Linha, N_Pontes),
@@ -32,33 +32,33 @@ ilhas(Puz, Ilhas) :-
 %2.3 - vizinhas/3
 %----------
 
-%Funcao auxiliar para satisfazer a 2a condicao de vizinhas/3
 %TODO: perguntar se posso usar um predicado feito muito mais ah frente
 %para definir este
-%Retorna true se ilha em Pos3 estah entre a ilha em Pos1 e a em Pos2
-%
-vizinha_aux(ilha(_, Pos1), ilha(_, Pos2), ilha(_, Pos3)) :-
-%  member(ilha(_, Pos3), Ilhas),
+%Averigua se ha alguma ilha entre a ilha em Pos1 e a ilha em Pos2
+ha_ilha_no_meio(ilha(_, Pos1), ilha(_, Pos2), ilha(_, Pos3)) :-
   posicoes_entre(Pos1, Pos2, Posicoes),
   member(Pos3, Posicoes).
   
-vizinhas_aux(Ilhas, Ilha1, Ilha2) :-
-  forall(member(Ilha3, Ilhas), vizinha_aux(Ilha1, Ilha2, Ilha3)).
-  
+%Certifica que nao ha ilhas entre Ilha1 e Ilha2
+nao_ha_ilhas_no_meio(Ilhas, Ilha1, Ilha2) :-
+  forall(member(Ilha3, Ilhas), \+ha_ilha_no_meio(Ilha1, Ilha2, Ilha3)).
   
 %Averigua se duas ilhas sao vizinhas (2o a 1a condicao dada no conceito)
-sao_vizinhas(ilha(_, (N_Linha_1, N_Col_1)), ilha(_, (N_Linha_2, N_Col_2))) :-
-  N_Linha_1 =:= N_Linha_2,
-  N_Col_1 =\= N_Col_2.
 
-sao_vizinhas(ilha(_, (N_Linha_1, N_Col_1)), ilha(_, (N_Linha_2, N_Col_2))) :-
-  N_Linha_1 =\= N_Linha_2,
+sao_vizinhas(Ilha, Ilha) :-
+  !,
+  fail.
+
+sao_vizinhas(ilha(_, (N_Linha_1, _)), ilha(_, (N_Linha_2, _))) :-
+  N_Linha_1 =:= N_Linha_2.
+
+sao_vizinhas(ilha(_, (_, N_Col_1)), ilha(_, (_, N_Col_2))) :-
   N_Col_1 =:= N_Col_2.
 
 vizinha(Ilhas, Ilha, IlhaVz) :-
   member(IlhaVz, Ilhas),
   sao_vizinhas(Ilha, IlhaVz),
-  \+ vizinhas_aux(Ilhas, Ilha, IlhaVz).
+  nao_ha_ilhas_no_meio(Ilhas, Ilha, IlhaVz).
 
 vizinhas(Ilhas, Ilha, Vizinhas) :-
   findall(IlhaVizinha, vizinha(Ilhas, Ilha, IlhaVizinha), Vizinhas).
@@ -165,7 +165,9 @@ caminho_livre(_, _, PosicoesPonte, ilha(_, Pos_I), ilha(_, Pos_Vz)) :-
   member(Posicao, PosicoesIlhaVz),
   !,
   fail.
-
+  
+%TODO: Make sure this works
+caminho_livre(_,_, _, _, _).
 
 %----------
 %2.8 - actualiza_vizinhas_entrada/5
@@ -271,8 +273,8 @@ junta_pontes(Estado, Num_pontes, ilha(N_pontes_1, Pos1), ilha(N_pontes_2, Pos2),
 
   %Adiciona as entradas atualizadas
   append(Estado_intermedio_2, [ilha(Novo_N_pontes_1, Pos1), VizinhasIlha1, NovasPontesIlha1], Estado_intermedio_3),
-  append(Estado_intermedio_3, [ilha(Novo_N_pontes_2, Pos2), VizinhasIlha2, NovasPontesIlha2], Estado_intermedio_4),
+  append(Estado_intermedio_3, [ilha(Novo_N_pontes_2, Pos2), VizinhasIlha2, NovasPontesIlha2], Novo_estado).
 
   %Step 3
-  actualiza_vizinhas_apos_pontes(Estado_intermedio_4, Pos1, Pos2, Estado_intermedio_5),
-  trata_ilhas_terminadas(Estado_intermedio_5, Novo_estado).
+  %actualiza_vizinhas_apos_pontes(Estado_intermedio_4, Pos1, Pos2, Estado_intermedio_5),
+  %trata_ilhas_terminadas(Estado_intermedio_4, Novo_estado).

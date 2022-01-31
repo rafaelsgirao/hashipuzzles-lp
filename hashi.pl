@@ -148,6 +148,7 @@ cria_ponte(Pos1, Pos2, ponte(PosMenor, PosMaior)) :-
 % - Essa ponte nao for entre as duas ilhas;
 % - Pelo menos uma das posicoes entre as duas ilhas for ocupada pela ponte.
 
+
 caminho_livre(Pos1, Pos2, _, ilha(_, Pos1), ilha(_, Pos2)) :- !.
 
 caminho_livre(Pos1, Pos2, _, ilha(_, Pos2), ilha(_, Pos1)) :- !.
@@ -257,24 +258,27 @@ trata_ilhas_terminadas(Estado, Novo_estado) :-
 %FIXME: this is horrible.
 junta_pontes(Estado, Num_pontes, ilha(N_pontes_1, Pos1), ilha(N_pontes_2, Pos2), Novo_estado) :-
   %Retirar entradas antigas
-  delete(Estado, [ilha(N_pontes_1, Pos1), VizinhasIlha1, PontesIlha1], Estado_intermedio_1),
-  delete(Estado_intermedio_1, [ilha(N_pontes_2, Pos2), VizinhasIlha2, PontesIlha2], Estado_intermedio_2),
+  select([ilha(N_pontes_1, Pos1), VizinhasIlha1, PontesIlha1], Estado, Estado_intermedio_1),
+  select([ilha(N_pontes_2, Pos2), VizinhasIlha2, PontesIlha2], Estado_intermedio_1, Estado_intermedio_2),
 
   cria_ponte(Pos1, Pos2, Ponte),
- 
+
   length(Pontes, Num_pontes), maplist(=(Ponte), Pontes),
+
 
   %Adiciona as novas pontes
   append(Pontes, PontesIlha1, NovasPontesIlha1),
+
   append(Pontes, PontesIlha2, NovasPontesIlha2),
-  
+  %writeln(PontesIlha1), writeln(PontesIlha2),
+  %writeln(NovasPontesIlha1), writeln(NovasPontesIlha2),
   Novo_N_pontes_1 is +(N_pontes_1, Num_pontes),
   Novo_N_pontes_2 is +(N_pontes_2, Num_pontes),
 
   %Adiciona as entradas atualizadas
   append(Estado_intermedio_2, [ilha(Novo_N_pontes_1, Pos1), VizinhasIlha1, NovasPontesIlha1], Estado_intermedio_3),
-  append(Estado_intermedio_3, [ilha(Novo_N_pontes_2, Pos2), VizinhasIlha2, NovasPontesIlha2], Novo_estado).
+  append(Estado_intermedio_3, [ilha(Novo_N_pontes_2, Pos2), VizinhasIlha2, NovasPontesIlha2], Estado_intermedio_4),
 
   %Step 3
-  %actualiza_vizinhas_apos_pontes(Estado_intermedio_4, Pos1, Pos2, Estado_intermedio_5),
-  %trata_ilhas_terminadas(Estado_intermedio_4, Novo_estado).
+  actualiza_vizinhas_apos_pontes(Estado_intermedio_4, Pos1, Pos2, Estado_intermedio_5),
+  trata_ilhas_terminadas(Estado_intermedio_5, Novo_estado).

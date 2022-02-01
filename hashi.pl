@@ -6,7 +6,7 @@
 %2.1 - Predicado extrai_ilhas_linha/3
 %----------
 
-
+%extrai_ilha_linha
 extrai_ilha_linha(N_Linha, Linha, ilha(N_Pontes, (N_Linha, N_Col))) :-
   nth1(N_Col, Linha, N_Pontes),
   N_Pontes =\= 0.
@@ -17,7 +17,6 @@ extrai_ilhas_linha(N_Linha, Linha, Ilhas) :-
 %----------
 %2.2 - ilhas/2
 %----------
-
 ilhas_linha(Puz, IlhasLinha) :-
   nth1(N_Linha, Puz, Linha_Puzzle),
   extrai_ilhas_linha(N_Linha, Linha_Puzzle, IlhasLinha).
@@ -26,14 +25,13 @@ ilhas(Puz, Ilhas) :-
   findall(IlhasLinha, ilhas_linha(Puz, IlhasLinha), ListaAninhadaIlhas),
   flatten(ListaAninhadaIlhas, Ilhas).
 
-
-
 %----------
 %2.3 - vizinhas/3
 %----------
 
 %TODO: perguntar se posso usar um predicado feito muito mais ah frente
 %para definir este
+
 %Averigua se ha alguma ilha entre a ilha em Pos1 e a ilha em Pos2
 ha_ilha_no_meio(ilha(_, Pos1), ilha(_, Pos2), ilha(_, Pos3)) :-
   posicoes_entre(Pos1, Pos2, Posicoes),
@@ -44,7 +42,6 @@ nao_ha_ilhas_no_meio(Ilhas, Ilha1, Ilha2) :-
   forall(member(Ilha3, Ilhas), \+ha_ilha_no_meio(Ilha1, Ilha2, Ilha3)).
   
 %Averigua se duas ilhas sao vizinhas (2o a 1a condicao dada no conceito)
-
 sao_vizinhas(Ilha, Ilha) :-
   !,
   fail.
@@ -78,6 +75,11 @@ estado(Ilhas, Estado) :-
 
 %----------
 %2.5 - posicoes_entre/3
+
+% posicoes_entre(Pos1, Pos2, Posicoes)
+% Posicoes eh a lista ordenada de posicoes 
+% Combs e a lista ordenada de combinacoes N a N dos elementos de Els
+% com soma Soma
 %----------
 posicao_entre((Linha1, Col1), (Linha2, Col2), (Linha1, Coluna)) :-
   Linha1 =:= Linha2,
@@ -108,11 +110,6 @@ posicao_entre((_, _), (_, _), _) :-
 posicoes_entre(Pos1, Pos2, Posicoes) :-
   bagof(Posicao, posicao_entre(Pos1, Pos2, Posicao), Posicoes).
 
-%TODO: Criar um predicado auxiliar ordena_posicoes, que recebe
-%Duas posicoes e retorna-as numa lista, ordenadas.
-
-%FIXME: this predicate is horrible.
-%FIXME: move this predicate to end of file
 
 ordena_posicoes((Linha1, Col1), (Linha2, Col2), [(Linha1, Col1), (Linha2, Col2)]) :-
   Linha1 < Linha2,
@@ -138,15 +135,10 @@ ordena_posicoes((Linha1, Col1), (Linha2, Col2), [(Linha2, Col2), (Linha1, Col1)]
 cria_ponte(Pos1, Pos2, ponte(PosMenor, PosMaior)) :-
   ordena_posicoes(Pos1, Pos2, [PosMenor, PosMaior]).
 
-
 %----------
 %2.7 - caminho_livre/5
 %----------
 
-%Duas ilhas deixam de ser vizinhas,
-%apos a criacao de ponte(Pos1, Pos2), sse:
-% - Essa ponte nao for entre as duas ilhas;
-% - Pelo menos uma das posicoes entre as duas ilhas for ocupada pela ponte.
 
 caminho_livre(Pos1, Pos2, _, ilha(_, Pos1), ilha(_, Pos2)) :- !.
 
@@ -166,8 +158,7 @@ caminho_livre(_, _, PosicoesPonte, ilha(_, Pos_I), ilha(_, Pos_Vz)) :-
   !,
   fail.
 
-%TODO: Make sure this works
-caminho_livre(_,_, _, _, _).
+caminho_livre(_,_, _, _, _) :- !.
 
 %----------
 %2.8 - actualiza_vizinhas_entrada/5
@@ -190,6 +181,7 @@ actualiza_vizinha_apos_pontes(Estado, Pos1, Pos2, Posicoes, EntradaNova) :-
 actualiza_vizinhas_apos_pontes(Estado, Pos1, Pos2, NovoEstado) :-
   posicoes_entre(Pos1, Pos2, Posicoes),
   findall(EntradaNova, actualiza_vizinha_apos_pontes(Estado, Pos1, Pos2, Posicoes, EntradaNova), NovoEstado).
+
 %----------
 %2.10 - ilhas_terminadas/2
 %----------
@@ -204,11 +196,9 @@ ilhas_terminadas(Estado, Ilhas_term) :-
 %----------
 %2.11 - tira_ilhas_terminadas_entrada/3
 %----------
-%TODO: averiguar se preciso do termo 'Ilha' aqui - prolly not, but better safe than sorry
 tira_ilha_terminada_entrada_aux(Ilhas_term, Vizinhas, IlhaVizinha) :-
   member(IlhaVizinha, Vizinhas),
   \+ member(IlhaVizinha, Ilhas_term).
-%  member(IlhaVizinha, NovaVizinhas).
 
 tira_ilhas_terminadas_entrada(Ilhas_term, [Ilha, Vizinhas, Pontes], [Ilha, NovaVizinhas, Pontes]) :-
   findall(IlhaVizinha, tira_ilha_terminada_entrada_aux(Ilhas_term, Vizinhas, IlhaVizinha), NovaVizinhas).
@@ -219,15 +209,14 @@ tira_ilhas_terminadas_entrada(Ilhas_term, [Ilha, Vizinhas, Pontes], [Ilha, NovaV
 tira_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada) :-
   member(Entrada, Estado),
   tira_ilhas_terminadas_entrada(Ilhas_term, Entrada, Nova_entrada).
-%  member(NovaEntrada, Novo_estado).
+
 
 tira_ilhas_terminadas(Estado, Ilhas_term, Novo_estado) :-
   findall(Nova_entrada, tira_ilhas_terminadas_aux(Estado, Ilhas_term, Nova_entrada), Novo_estado).
 %----------
 %2.13 - tira_ilhas_terminadas_entrada/3
 %----------
-%TODO: perguntar se este corte eh sempre vahlido 
-% ou se preciso de ter um \+ member(...) dentro da 2a definicao
+
 marca_ilhas_terminadas_entrada(Ilhas_term, [ilha(N_pontes, Pos), Vizinhas, Pontes], [ilha('X', Pos), Vizinhas, Pontes]) :-
   member(ilha(N_pontes, Pos), Ilhas_term),
   !.
@@ -255,16 +244,9 @@ trata_ilhas_terminadas(Estado, Novo_estado) :-
 %2.16 - junta_pontes/5
 %----------
 
-%replace(I, L, E, K) :-
-%  nth0(I, L, _, R),
-%  nth0(I, K, E, R).
 
 junta_pontes(Estado, Num_pontes, ilha(N_pontes_1, Pos1), ilha(N_pontes_2, Pos2), Novo_estado) :-
-  %Retirar entradas antigas
-%  select([ilha(N_pontes_1, Pos1), VizinhasIlha1, PontesIlha1], Estado, Estado_intermedio_1),
-%  select([ilha(N_pontes_2, Pos2), VizinhasIlha2, PontesIlha2], Estado_intermedio_1, Estado_intermedio_2),
 
-  %TODO: replace these at the end, see substitui_el
   nth0(Indice_1, Estado, [ilha(N_pontes_1, Pos1), VizinhasIlha1, PontesIlha1], Estado_intermedio_1),
   nth0(Indice_2, Estado_intermedio_1, [ilha(N_pontes_2, Pos2), VizinhasIlha2, PontesIlha2], Estado_intermedio_2),
 
@@ -277,11 +259,7 @@ junta_pontes(Estado, Num_pontes, ilha(N_pontes_1, Pos1), ilha(N_pontes_2, Pos2),
   append(Pontes, PontesIlha1, NovasPontesIlha1),
 
   append(Pontes, PontesIlha2, NovasPontesIlha2),
- % writeln(PontesIlha1), writeln(PontesIlha2),
- % writeln(NovasPontesIlha1), writeln(NovasPontesIlha2),
 
- % writeln(NovasPontesIlha1),
-  %writeln(NovasPontesIlha2),
   
   %Reinsere as entradas atualizadas
   nth0(Indice_2, Estado_intermedio_3, [ilha(N_pontes_2, Pos2), VizinhasIlha2, NovasPontesIlha2], Estado_intermedio_2),

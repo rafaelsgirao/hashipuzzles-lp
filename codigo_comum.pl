@@ -4,6 +4,7 @@
 % podem ser uteis durante o desenvolvimento do projeto.
 %-------------------------------------------------------------------------------
 
+:- [puzzles_publicos].
 
 %-------------------------------------------------------------------------------
 %                escreve_Puzzle(Puzzle, Estado)
